@@ -9,7 +9,7 @@ class Heap:
     
     def __str__(self):
         """Returns a string representing each node in the heap, excluding child nodes"""
-        string = ", ".join(f"{node.char}:{node.frequency}" for node in self.nodes)
+        string = ", ".join(f"{node.byte}:{node.frequency}" for node in self.nodes)
         return f"{{ {string} }}"
 
     def heapify(self):
@@ -52,3 +52,18 @@ class Heap:
         """Adds the newNode to the Heap and updates the Heap to maintain min-heap order"""
         self.nodes.append(newNode)
         self.swim(len(self)-1)
+
+    def is_min_heap(self):
+        """This method checks whether or not the heap is sorted in min-heap order"""
+        n = len(self.nodes)
+        # Check each non-leaf node
+        for i in range(n // 2 - 1, -1, -1):
+            # Compare with left child
+            left_child = 2 * i + 1
+            if left_child < n and self.nodes[i] > self.nodes[left_child]:
+                return False
+            # Compare with right child
+            right_child = 2 * i + 2
+            if right_child < n and self.nodes[i] > self.nodes[right_child]:
+                return False
+        return True

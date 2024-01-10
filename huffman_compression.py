@@ -74,23 +74,23 @@ def compress(input_file, output_file, file_type):
 
 def decode_text(encoded_text, huffman_tree, output_file):
     """This method decodes the text according to the huffman_tree"""
-    bit_counter = 0
     current_node = huffman_tree
+    output_buffer = bytearray()
+
+    
+    for bit in encoded_text:
+        if bit == '0':
+            current_node = current_node.left
+
+        elif bit == '1':
+            current_node = current_node.right
+
+        if current_node.byte is not None:
+            output_buffer.append(current_node.byte)
+            current_node = huffman_tree
 
     with open(output_file, 'wb') as file:
-        for bit in encoded_text:
-            if bit == '0':
-                current_node = current_node.left
-                bit_counter += 1
-
-            elif bit == '1':
-                current_node = current_node.right
-                bit_counter += 1
-
-            if current_node.byte is not None:
-                file.write(current_node.byte.to_bytes(bit_counter, byteorder='big'))
-                bit_counter = 0
-                current_node = huffman_tree
+        file.write(output_buffer)
 
 def decompress(input_file):
     """This method reads the data from the input_file, uses helper methods to obtain the decoded text, and writes it to the output_file"""
@@ -119,7 +119,7 @@ def decompress(input_file):
 if __name__ == "__main__":
     """Provides error handling for usage of script and calls appropriate method if no errors"""
     if (len(sys.argv) != 3) or not \
-        ((sys.argv[1].endswith(".txt") or sys.argv[1].endswith(".bin")) or sys.argv[1].endswith(".html")) or \
+        ((sys.argv[1].endswith(".txt") or sys.argv[1].endswith(".bin")) or sys.argv[1].endswith(".jpeg")) or \
             (sys.argv[2] != "c" and sys.argv[2] != "d"):
         print("Usage: python huffman_compression.py <file_name> <c/d>")
     elif sys.argv[2] == "c":
@@ -127,9 +127,9 @@ if __name__ == "__main__":
         if sys.argv[1].endswith(".txt"):
             compressed_file = input_file.replace(".txt", "_compressed.bin")
             file_type = "txt"
-        elif sys.argv[1].endswith(".html"):
-            compressed_file = input_file.replace(".html", "_compressed.bin")
-            file_type = "html"
+        elif sys.argv[1].endswith(".jpeg"):
+            compressed_file = input_file.replace(".jpeg", "_compressed.bin")
+            file_type = "jpeg"
         compress(input_file, compressed_file, file_type)
     elif sys.argv[2] == "d":
         input_file = sys.argv[1]

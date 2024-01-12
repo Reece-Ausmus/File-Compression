@@ -60,7 +60,7 @@ def compress(input_file, output_file, file_type):
     encoded_text = encode_text(binary_data, huffman_codes)
 
     with open(output_file, "wb") as file:
-        pickle.dump(huffman_tree, file)
+        pickle.dump(huffman_codes, file)
 
         file.write(b"\0")
 
@@ -72,30 +72,30 @@ def compress(input_file, output_file, file_type):
         file.write(len(encoded_text).to_bytes(4, byteorder='big'))
         file.write(int(encoded_text, 2).to_bytes((len(encoded_text) + 7) // 8, byteorder='big'))
 
-def decode_text(encoded_text, huffman_tree, output_file):
+def decode_text(encoded_text, huffman_codes, output_file):
     """This method decodes the text according to the huffman_tree"""
-    current_node = huffman_tree
+    current_code = ''
     output_buffer = bytearray()
+    huffman_codes_reverse = {v: k for k, v in huffman_codes.items()}
 
-    
     for bit in encoded_text:
-        if bit == '0':
-            current_node = current_node.left
-
-        elif bit == '1':
-            current_node = current_node.right
-
-        if current_node.byte is not None:
-            output_buffer.append(current_node.byte)
-            current_node = huffman_tree
-
+        current_code += bit
+        for byte, code in huffman_codes.items():
+            if code == current_code:
+                output_buffer.append(byte)
+                current_code = ''
+                break
+    
     with open(output_file, 'wb') as file:
         file.write(output_buffer)
 
 def decompress(input_file):
     """This method reads the data from the input_file, uses helper methods to obtain the decoded text, and writes it to the output_file"""
     with open(input_file, "rb") as file:
-        huffman_tree = pickle.load(file)
+        try:
+            huffman_codes = pickle.load(file)
+        except pickle.UnpicklingError as e:
+            raise ValueError("Invalid compressed file format") from e
 
         separator = file.read(1)
         if separator != b"\0":
@@ -113,7 +113,7 @@ def decompress(input_file):
     
     encoded_text = encoded_data.zfill(encoded_text_length)
     output_file = input_file.replace(".bin", "_decompressed." + file_type_text)
-    decode_text(encoded_text, huffman_tree, output_file)
+    decode_text(encoded_text, huffman_codes, output_file)
 
 
 if __name__ == "__main__":

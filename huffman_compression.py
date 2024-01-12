@@ -80,11 +80,9 @@ def decode_text(encoded_text, huffman_codes, output_file):
 
     for bit in encoded_text:
         current_code += bit
-        for byte, code in huffman_codes.items():
-            if code == current_code:
-                output_buffer.append(byte)
-                current_code = ''
-                break
+        if current_code in huffman_codes_reverse:
+            output_buffer.append(huffman_codes_reverse[current_code])
+            current_code = ''
     
     with open(output_file, 'wb') as file:
         file.write(output_buffer)

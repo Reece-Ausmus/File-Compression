@@ -1,4 +1,5 @@
 import sys
+import os
 import pickle
 from TreeNode import TreeNode
 from Heap import Heap
@@ -59,18 +60,25 @@ def compress(input_file, output_file, file_type):
 
     encoded_text = encode_text(binary_data, huffman_codes)
 
-    with open(output_file, "wb") as file:
-        pickle.dump(huffman_codes, file)
+    output_buffer = bytearray()
 
-        file.write(b"\0")
-
-        file_type_binary = file_type.encode()
-        file_type_string = ''.join(format(byte, '08b') for byte in file_type_binary)
-        file.write(len(file_type_string).to_bytes(4, byteorder='big'))
-        file.write(int(file_type_string, 2).to_bytes((len(file_type_string) + 7) // 8, byteorder='big'))
-        
-        file.write(len(encoded_text).to_bytes(4, byteorder='big'))
-        file.write(int(encoded_text, 2).to_bytes((len(encoded_text) + 7) // 8, byteorder='big'))
+    pickled_huffman_codes = pickle.dumps(huffman_codes)
+    output_buffer.extend(pickled_huffman_codes)
+    output_buffer.extend(b"\0")
+    file_type_binary = file_type.encode()
+    file_type_string = ''.join(format(byte, '08b') for byte in file_type_binary)
+    output_buffer.extend(len(file_type_string).to_bytes(4, byteorder='big'))
+    output_buffer.extend(int(file_type_string, 2).to_bytes((len(file_type_string) + 7) // 8, byteorder='big'))
+    
+    output_buffer.extend(len(encoded_text).to_bytes(4, byteorder='big'))
+    output_buffer.extend(int(encoded_text, 2).to_bytes((len(encoded_text) + 7) // 8, byteorder='big'))
+    
+    if len(output_buffer) < os.path.getsize(input_file):
+        with open(output_file, "wb") as file:
+            file.write(output_buffer)
+        print(f"Compression successful! Compressed file saved as {output_file}")
+    else:
+        print("Compression not applied as the compressed file size is not smaller than the original file size.")
 
 def decode_text(encoded_text, huffman_codes, output_file):
     """This method decodes the text according to the huffman_tree"""

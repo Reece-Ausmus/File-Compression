@@ -1,6 +1,6 @@
 # TXT-Compression
 
-This Python script will use Huffman Coding to compress .txt files. It also provides functionality to decompress .bin files assuming they are compressed with this program. The script includes methods to build a Huffman Tree based on the frequency of characters in a text, encode the text using Huffman Codes, and compress the data into a binary file.
+This Python script will use Huffman Coding to compress files. It also provides functionality to decompress .bin files assuming they are compressed with this program. The script includes methods to build a Huffman Tree based on the frequency of characters in a text, encode the text using Huffman Codes, and compress the data into a binary file.
 
 ## Usage
 
@@ -23,6 +23,6 @@ This command compresses the "input.txt" file and generates a binary compressed f
 
 This command decompresses the "input.bin" file and generates a text decompressed file named "input_decompressed.txt".
 
-## Huffman Tree Storage
+## Huffman Code Storage
 
-The Huffman Tree is stored at the beginning of the binary compressed file during compression using the `pickle` module. The compressed file format includes the Huffman Tree, a separator byte (`0x00`), 4 bytes containing the length of the encoded text, and the encoded text itself.
+The Huffman Codes are stored at the beginning of the binary compressed file during compression using the `pickle` module. The compressed file format includes the Huffman Codes as a dictionary, a separator byte (`0x00`), 4 bytes containing the length of the encoded text, and the encoded text itself.

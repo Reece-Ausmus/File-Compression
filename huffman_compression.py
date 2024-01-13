@@ -92,8 +92,7 @@ def decode_text(encoded_text, huffman_codes, output_file):
             output_buffer.append(huffman_codes_reverse[current_code])
             current_code = ''
     
-    with open(output_file, 'wb') as file:
-        file.write(output_buffer)
+    return output_buffer
 
 def decompress(input_file):
     """This method reads the data from the input_file, uses helper methods to obtain the decoded text, and writes it to the output_file"""
@@ -119,7 +118,11 @@ def decompress(input_file):
     
     encoded_text = encoded_data.zfill(encoded_text_length)
     output_file = input_file.replace(".bin", "_decompressed." + file_type_text)
-    decode_text(encoded_text, huffman_codes, output_file)
+    output_buffer = decode_text(encoded_text, huffman_codes, output_file)
+
+    with open(output_file, 'wb') as file:
+        file.write(output_buffer)
+    print(f"Decompression successful! Decompressed file saved as {output_file}")
 
 
 if __name__ == "__main__":

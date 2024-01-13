@@ -49,11 +49,14 @@ def encode_text(data, huffman_codes):
         encoded_text += huffman_codes[byte]
     return encoded_text
 
-def compress(input_file, output_file, file_type):
+def compress(input_file):
     """This method reads the data from the input_file, uses helper methods to obtain the encoded text, and writes it to the output_file"""
     with open(input_file, "rb") as file:
         binary_data = file.read()
     
+    file_type = input_file.split('.')[-1]
+    output_file = input_file.replace("." + file_type, "_compressed.bin")
+
     frequency_table = build_frequency_table(binary_data)
     huffman_tree = build_huffman_tree(frequency_table)
     huffman_codes = build_huffman_codes(huffman_tree)
@@ -80,7 +83,7 @@ def compress(input_file, output_file, file_type):
     else:
         print("Compression not applied as the compressed file size is not smaller than the original file size.")
 
-def decode_text(encoded_text, huffman_codes, output_file):
+def decode_text(encoded_text, huffman_codes):
     """This method decodes the text according to the huffman_tree"""
     current_code = ''
     output_buffer = bytearray()
@@ -131,10 +134,6 @@ if __name__ == "__main__":
         (sys.argv[2] != "c" and sys.argv[2] != "d"):
         print("Usage: python huffman_compression.py <file_name> <c/d>")
     elif sys.argv[2] == "c":
-        input_file = sys.argv[1]
-        file_type = input_file.split('.')[-1]
-        compressed_file = input_file.replace("." + file_type, "_compressed.bin")
-        compress(input_file, compressed_file, file_type)
+        compress(sys.argv[1])
     elif sys.argv[2] == "d":
-        input_file = sys.argv[1]
-        decompress(input_file)
+        decompress(sys.argv[1])

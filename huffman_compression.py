@@ -49,13 +49,14 @@ def encode_text(data, huffman_codes):
         encoded_text += huffman_codes[byte]
     return encoded_text
 
-def compress(input_file):
+def compress(input_file, output_file=""):
     """This method reads the data from the input_file, uses helper methods to obtain the encoded text, and writes it to the output_file"""
     with open(input_file, "rb") as file:
         binary_data = file.read()
     
     file_type = input_file.split('.')[-1]
-    output_file = input_file.replace("." + file_type, "_compressed.bin")
+    if output_file == "":
+        output_file = input_file.replace("." + file_type, "_compressed.bin")
 
     frequency_table = build_frequency_table(binary_data)
     huffman_tree = build_huffman_tree(frequency_table)
@@ -97,7 +98,7 @@ def decode_text(encoded_text, huffman_codes):
     
     return output_buffer
 
-def decompress(input_file):
+def decompress(input_file, output_file=""):
     """This method reads the data from the input_file, uses helper methods to obtain the decoded text, and writes it to the output_file"""
     with open(input_file, "rb") as file:
         try:
@@ -120,8 +121,10 @@ def decompress(input_file):
     file_type_text = file_type_binary.decode('utf-8')
     
     encoded_text = encoded_data.zfill(encoded_text_length)
-    output_file = input_file.replace(".bin", "_decompressed." + file_type_text)
-    output_buffer = decode_text(encoded_text, huffman_codes, output_file)
+    if output_file == "":
+        output_file = input_file.replace(".bin", "_decompressed." + file_type_text)
+    
+    output_buffer = decode_text(encoded_text, huffman_codes)
 
     with open(output_file, 'wb') as file:
         file.write(output_buffer)
@@ -130,10 +133,16 @@ def decompress(input_file):
 
 if __name__ == "__main__":
     """Provides error handling for usage of script and calls appropriate method if no errors"""
-    if (len(sys.argv) != 3) or \
+    if not (len(sys.argv) == 3 or len(sys.argv) == 4) or \
         (sys.argv[2] != "c" and sys.argv[2] != "d"):
-        print("Usage: python huffman_compression.py <file_name> <c/d>")
-    elif sys.argv[2] == "c":
-        compress(sys.argv[1])
-    elif sys.argv[2] == "d":
-        decompress(sys.argv[1])
+        print("Usage: python huffman_compression.py <input_file> <c/d> {<output_file>}")
+    elif (len(sys.argv) == 3):
+        if sys.argv[2] == "c":
+            compress(sys.argv[1])
+        elif sys.argv[2] == "d":
+            decompress(sys.argv[1])
+    elif (len(sys.argv) == 4):
+        if sys.argv[2] == "c":
+            compress(sys.argv[1], sys.argv[3])
+        elif sys.argv[2] == "d":
+            decompress(sys.argv[1], sys.argv[3])

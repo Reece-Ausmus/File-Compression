@@ -134,15 +134,15 @@ def decompress(input_file, output_file=""):
 if __name__ == "__main__":
     """Provides error handling for usage of script and calls appropriate method if no errors"""
     if not (len(sys.argv) == 3 or len(sys.argv) == 4) or \
-        (sys.argv[2] != "c" and sys.argv[2] != "d"):
-        print("Usage: python huffman_compression.py <input_file> <c/d> {<output_file>}")
+        (sys.argv[2] != "-c" and sys.argv[2] != "-d"):
+        print("Usage: python huffman_compression.py <input_file> -c/-d [<output_file>]")
     elif (len(sys.argv) == 3):
-        if sys.argv[2] == "c":
+        if sys.argv[2] == "-c":
             compress(sys.argv[1])
-        elif sys.argv[2] == "d":
+        elif sys.argv[2] == "-d":
             decompress(sys.argv[1])
     elif (len(sys.argv) == 4):
-        if sys.argv[2] == "c":
+        if sys.argv[2] == "-c":
             compress(sys.argv[1], sys.argv[3])
-        elif sys.argv[2] == "d":
+        elif sys.argv[2] == "-d":
             decompress(sys.argv[1], sys.argv[3])

@@ -8,12 +8,12 @@ This script does not guarantee a compressed file that is smaller in size than th
 
 ## Usage
 
-    python3 huffman_compression.py <file_name> <c/d> {<output_file>}
+    python3 huffman_compression.py <file_name> -c/-d [<output_file>]
 
 - `<file_name>`: The name of the input file
   - Use a .txt file for compression
   - Use a .bin file for decompression
-- `<c/d>`: Use "c" for compression, "d" for decompression
+- `-c/-d`: Use "-c" for compression, "-d" for decompression
 - `<output_file>`: The name of the output file (optional)
 
 ### Compression Example
